@@ -1,0 +1,13 @@
+<html>
+  <head>
+    <title>Create Blog</title>
+  </head>
+  <body>
+    <h1>Create New Blog</h1>
+    <form method="POST">
+      {% csrf_token %} {{ form.as_p }}
+      <button type="submit">Submit</button>
+    </form>
+    <a href="{% url 'blog_list' %}">Back to Blog List</a>
+  </body>
+</html>
