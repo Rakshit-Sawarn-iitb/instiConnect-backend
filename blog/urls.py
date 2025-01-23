@@ -5,6 +5,8 @@ from .views import *
 
 urlpatterns = [
     path('', get_many_blog, name='get_all'),
+    path('sort/like', sort_by_like, name='like_sort'),
+    path('sort/date', sort_by_date, name='data_sort'),
     path('post/', post_blog, name='post_blog_'),
     path('find/' , get_one_blog , name = 'get_one'),
     path('delete/' , delete_blog , name = 'delete'),

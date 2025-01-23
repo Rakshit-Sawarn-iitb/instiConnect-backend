@@ -93,3 +93,25 @@ def edit_blog(request , id):
         print(e)
         return Response({ 'user_no' : 403 , 'content' : 'invalid id'})
 
+
+
+@api_view(['GET'])
+def sort_by_like(request):
+    sort_by = request.query_params.get('sort_by', 'likes')
+
+    blog_objs = Blog.objects.all().order_by('-likes')  # Descending order by likes
+
+    serializer = blogSerializer(blog_objs, many=True)
+
+    return Response({'user_no': 200, 'content': serializer.data})
+
+
+@api_view(['GET'])
+def sort_by_date(request):
+    sort_by = request.query_params.get('sort_by', 'likes')
+
+    blog_objs = Blog.objects.all().order_by('-date')  # Ascending order by data
+
+    serializer = blogSerializer(blog_objs, many=True)
+
+    return Response({'user_no': 200, 'content': serializer.data})
