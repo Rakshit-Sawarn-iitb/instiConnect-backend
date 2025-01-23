@@ -16,7 +16,7 @@ def get_one_blog(request , id):
     try:
 
         blog_objs = Blog.objects.get(id = id)
-        serializer = blogSerializer(blog_objs , many = True)
+        serializer = blogSerializer(blog_objs )
         return Response({ 'user_no' : 200 , 'content' : serializer.data})
 
     except Exception as e:
@@ -77,4 +77,19 @@ def like_blog(request, id):
             'content': 'Something went wrong'
         })
 
+
+@api_view(['PATCH'])
+def edit_blog(request , id):
+    try:
+
+        blog_obj = Blog.objects.get(id=id)
+        serializer = blogSerializer(blog_obj, data=request.data, partial=True)
+        if not serializer.is_valid():
+            print(serializer.errors)
+            return Response({ 'user_no' : 200 ,'errors' : serializer.errors , 'content' : 'something went wrong'})
+        serializer.save()
+        return Response({ 'user_no' : 200 , 'content' : serializer.data})
+    except Exception as e:
+        print(e)
+        return Response({ 'user_no' : 403 , 'content' : 'invalid id'})
 

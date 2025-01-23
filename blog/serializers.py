@@ -5,4 +5,4 @@ class blogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Blog
-        fields = ['title', 'text']
+        fields = "__all__"
