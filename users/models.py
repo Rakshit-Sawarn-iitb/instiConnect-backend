@@ -3,11 +3,13 @@ from django.db import models
 class User(models.Model):
 
     name = models.CharField(max_length=100)
+    username = models.SlugField(default = "@")
     password = models.SlugField(default='0')
     roll_number = models.CharField(max_length=7)
     phone_number = models.CharField(max_length=13)
     email_id = models.EmailField(unique=True, blank=False)
     department = models.CharField(max_length= 50)
+    hostel = models.CharField(max_length=10)
     current_year = models.IntegerField()
     date_of_birth = models.DateField()
 
