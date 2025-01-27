@@ -67,7 +67,4 @@ def sort_by_followers(request):
     user_objs = User.objects.all().order_by('-followers')
     serializer = UserSerializer(user_objs, many = True)
     return Response({'status' : 200,'content' : serializer.data})
-
-
-    
-        
+ 
