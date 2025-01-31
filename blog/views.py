@@ -76,6 +76,42 @@ def like_blog(request, id):
             'user_no': 500,
             'content': 'Something went wrong'
         })
+    
+
+@api_view(['POST'])
+def unlike_blog(request, id):
+    try:
+        blog_obj = Blog.objects.get(id=id)
+        
+        # Decrement the likes count
+        if blog_obj.likes > 0:
+            blog_obj.likes -= 1
+            blog_obj.save()
+        else:
+            return Response({
+                'user_no': 400,
+                'content': 'Cannot have negative likes'
+            })
+
+        serializer = blogSerializer(blog_obj)
+
+        return Response({
+            'user_no': 200,
+            'content': 'Blog unliked successfully',
+            'likes': blog_obj.likes,
+            'blog': serializer.data
+        })
+    except Blog.DoesNotExist:
+        return Response({
+            'user_no': 404,
+            'content': 'Blog not found'
+        })
+    except Exception as e:
+        print(e)
+        return Response({
+            'user_no': 500,
+            'content': 'Something went wrong'
+        })
 
 
 @api_view(['PATCH'])
