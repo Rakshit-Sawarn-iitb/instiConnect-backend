@@ -4,6 +4,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import *
 from .serializers import *
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 @api_view(['POST'])
@@ -14,6 +16,23 @@ def registration(request):
     else:
         serializer.save()
         return Response({'status' : 200, 'content' : request.data, 'message' : 'Registered successfully.'})
+    
+@api_view(['POST'])
+def login(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+
+    try:
+        user = User.objects.get(username=username, password=password)
+    except User.DoesNotExist:
+        return Response({'status' : 200, 'message' : 'Invalid Credentials'})
+    
+    refresh = RefreshToken.for_user(user)
+
+    return Response({
+        'refresh': str(refresh),
+        'access': str(refresh.access_token),
+    })
     
 @api_view(['GET'])
 def get_users_list(request):
@@ -126,4 +145,3 @@ def get_connections(request,id):
         return Response({'status' : 200, 'content' : list(connections)})
     except Exception as e:
         return Response({'status' : 403, 'message' : 'user does not exist'})
-    
