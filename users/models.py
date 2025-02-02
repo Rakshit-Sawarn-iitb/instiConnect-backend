@@ -12,6 +12,8 @@ class User(models.Model):
     hostel = models.CharField(max_length=10)
     current_year = models.IntegerField()
     date_of_birth = models.DateField()
+    connections = models.ManyToManyField('self', blank=True, symmetrical=True, related_name="connected_users")
+    connection_requests = models.ManyToManyField('self', blank=True, symmetrical=False, related_name="requested_connections")
 
     bio = models.TextField(max_length= 500, blank=True)
     no_of_posts = models.IntegerField(default=0)
