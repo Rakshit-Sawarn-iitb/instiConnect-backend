@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from .models import *
 from .serializers import *
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.hashers import check_password
 
 
 @api_view(['POST'])
@@ -16,7 +18,31 @@ def registration(request):
     else:
         serializer.save()
         return Response({'status' : 200, 'content' : request.data, 'message' : 'Registered successfully.'})
-    
+
+@api_view(['POST'])
+def login(request):
+    email = request.data.get('email_id')
+    password = request.data.get('password')
+
+    if not email or not password:
+        return Response({'status': 400, 'message': 'Email and password are required'})
+
+    try:
+        user = User.objects.get(email_id=email)
+    except User.DoesNotExist:
+        return Response({'status': 404, 'message': 'User not found'})
+
+    if not check_password(password, user.password):
+        return Response({'status': 401, 'message': 'Invalid credentials'})
+
+    refresh = RefreshToken.for_user(user)
+    return Response({
+        'status': 200,
+        'message': 'Login successful',
+        'access': str(refresh.access_token),
+        'refresh': str(refresh),
+    })
+
 @api_view(['GET'])
 def get_users_list(request):
     user_objs = User.objects.all()
@@ -24,12 +50,16 @@ def get_users_list(request):
     return Response({'status' : 200,'content' : serializer.data})
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_one_user(request,name):
+    print("hello world")
+    print("Request Headers:", request.headers)
     try:
         user_obj = User.objects.get(name = name)
         serializer = UserSerializer(user_obj)
         return Response({'status' : 200,'content' : serializer.data})
     except Exception as e:
+        print(e)
         return Response({'status' : 403, 'message' : 'user not found'})
     
 @api_view(['patch'])

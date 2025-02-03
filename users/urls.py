@@ -17,4 +17,5 @@ urlpatterns = [
     path("get_all_requests/<id>",get_connection_requests),
     path("get_all_connections/<id>",get_connections),
     path("disconnect/",disconnect),
+    path('login/', login, name='login'),
 ]
