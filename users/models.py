@@ -21,9 +21,14 @@ class User(models.Model):
     date_joined = models.DateTimeField(auto_now_add=True)
 
     is_verified = models.BooleanField(default=False)
+    USERNAME_FIELD = 'email_id'
+    is_anonymous = False
+    is_authenticated = True
+    REQUIRED_FIELDS = ['password']
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.roll_number
+        return self.email_id
 
 
 
