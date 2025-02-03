@@ -17,23 +17,6 @@ def registration(request):
         serializer.save()
         return Response({'status' : 200, 'content' : request.data, 'message' : 'Registered successfully.'})
     
-@api_view(['POST'])
-def login(request):
-    username = request.data.get("username")
-    password = request.data.get("password")
-
-    try:
-        user = User.objects.get(username=username, password=password)
-    except User.DoesNotExist:
-        return Response({'status' : 200, 'message' : 'Invalid Credentials'})
-    
-    refresh = RefreshToken.for_user(user)
-
-    return Response({
-        'refresh': str(refresh),
-        'access': str(refresh.access_token),
-    })
-    
 @api_view(['GET'])
 def get_users_list(request):
     user_objs = User.objects.all()
@@ -129,6 +112,25 @@ def accept_connection_request(request):
     receiver.connections.add(sender)
     return Response({'status' : 200, 'message' : 'Connected'})
 
+@api_view(['POST'])
+def reject_connection_request(request):
+    sender_id = request.data.get('sender_id')
+    receiver_id = request.data.get('receiver_id')
+
+    if not sender_id or not receiver_id:
+        return Response({'status' : 400, 'message' : "senderid and receiver id are required"})
+    
+    sender = get_object_or_404(User, id = sender_id)
+    receiver = get_object_or_404(User, id = receiver_id)
+
+    if sender not in receiver.connection_requests.all():
+        return Response({'status' : 400, 'message' : 'no pending requests from this user'})
+    if sender in receiver.connections.all():
+        return Response({'status' : 400, 'message' : 'Already Connected'})
+    
+    receiver.connection_requests.remove(sender)
+    return Response({'status' : 200})
+
 @api_view(['GET'])
 def get_connection_requests(request,id):
     try:
@@ -145,3 +147,24 @@ def get_connections(request,id):
         return Response({'status' : 200, 'content' : list(connections)})
     except Exception as e:
         return Response({'status' : 403, 'message' : 'user does not exist'})
+    
+@api_view(['POST'])
+def disconnect(request):
+    sender_id = request.data.get('sender_id')
+    receiver_id = request.data.get('receiver_id')
+
+    if not sender_id or not receiver_id:
+        return Response({'status' : 400, 'message' : "senderid and receiver id are required"})
+    
+    sender = get_object_or_404(User, id = sender_id)
+    receiver = get_object_or_404(User, id = receiver_id)
+
+    if sender not in receiver.connections.all():
+        return Response({'status' : 400, 'message' : 'Already disconnected'})
+    
+    receiver.connection_requests.remove(sender)
+    sender.connection_requests.remove(receiver)
+    return Response({'status' : 200, 'message' : 'Disconnected'})
+
+
+
