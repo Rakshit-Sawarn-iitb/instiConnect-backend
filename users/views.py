@@ -44,6 +44,7 @@ def login(request):
     })
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_users_list(request):
     user_objs = User.objects.all()
     serializer = UserSerializer(user_objs, many = True)
@@ -63,6 +64,7 @@ def get_one_user(request,name):
         return Response({'status' : 403, 'message' : 'user not found'})
     
 @api_view(['patch'])
+@permission_classes([IsAuthenticated])
 def update(request,id):
     try:
         user_obj = User.objects.get(id = id)
@@ -76,6 +78,7 @@ def update(request,id):
         return Response({'status' : 403, 'message' : 'invalid id'})
     
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def delete_account(request,id):
     try:
         user_obj = User.objects.get(id =id)
@@ -85,6 +88,7 @@ def delete_account(request,id):
         return Response({'status' : 403, 'message' : 'invalid id'})
     
 @api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
 def follow(request,id):
     try:
         user_obj = User.objects.get(id = id)
@@ -96,12 +100,14 @@ def follow(request,id):
         return Response({'status' : 403, 'message' : 'invalid id'})
     
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def sort_by_followers(request):
     user_objs = User.objects.all().order_by('-followers')
     serializer = UserSerializer(user_objs, many = True)
     return Response({'status' : 200,'content' : serializer.data})
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def send_connection_request(request):
     sender_id = request.data.get('sender_id')
     receiver_id = request.data.get('receiver_id')
@@ -123,6 +129,7 @@ def send_connection_request(request):
     return Response({'status' : 200, 'message' : 'Request sent successfully'})
     
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def accept_connection_request(request):
     sender_id = request.data.get('sender_id')
     receiver_id = request.data.get('receiver_id')
@@ -143,6 +150,7 @@ def accept_connection_request(request):
     return Response({'status' : 200, 'message' : 'Connected'})
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def reject_connection_request(request):
     sender_id = request.data.get('sender_id')
     receiver_id = request.data.get('receiver_id')
@@ -162,6 +170,7 @@ def reject_connection_request(request):
     return Response({'status' : 200})
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_connection_requests(request,id):
     try:
         connection_request = User.objects.get(id = id).connection_requests.all().values('id')
@@ -170,6 +179,7 @@ def get_connection_requests(request,id):
         return Response({'status' : 403, 'message' : 'user does not exist'})
     
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_connections(request,id):
     try:
         connections = User.objects.get(id = id).connections.all().values('id')
@@ -179,6 +189,7 @@ def get_connections(request,id):
         return Response({'status' : 403, 'message' : 'user does not exist'})
     
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def disconnect(request):
     sender_id = request.data.get('sender_id')
     receiver_id = request.data.get('receiver_id')
