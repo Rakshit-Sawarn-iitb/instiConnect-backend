@@ -218,6 +218,3 @@ def disconnect(request):
     receiver.connection_requests.remove(sender)
     sender.connection_requests.remove(receiver)
     return Response({'status' : 200, 'message' : 'Disconnected'})
-
-
-
