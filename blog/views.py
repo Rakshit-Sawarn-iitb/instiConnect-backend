@@ -86,6 +86,7 @@ def like_blog(request, id):
     
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def unlike_blog(request, id):
     try:
         blog_obj = Blog.objects.get(id=id)
@@ -164,6 +165,7 @@ def sort_by_date(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_one_blog_title(request, title):
     try:
         blog_objs = Blog.objects.get(title=title)
@@ -198,6 +200,7 @@ def calculate_similarity(input_text, blog_texts):
     return cosine_similarities
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_similar_blogs(request, input_text):
     try:
         # Fetch all blog objects from the database
