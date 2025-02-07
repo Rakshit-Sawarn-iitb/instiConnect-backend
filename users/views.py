@@ -99,6 +99,18 @@ def follow(request,id):
     except Exception as e:
         return Response({'status' : 403, 'message' : 'invalid id'})
     
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def unfollow(request,id):
+    try:
+        user_obj = User.objects.get(id = id)
+        user_obj.followers -= 1
+        user_obj.save()
+        serializer = UserSerializer(user_obj, partial = True)
+        return Response({'status' : 200, 'content' : serializer.data, 'message' : 'unfollowed'})
+    except Exception as e:
+        return Response({'status' : 403, 'message' : 'invalid id'})
+    
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def sort_by_followers(request):

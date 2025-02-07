@@ -10,6 +10,7 @@ urlpatterns = [
     path("update/<id>", update),
     path("delete/<id>/", delete_account),
     path("follow/<id>", follow),
+    path("unfollow/<id>", unfollow),
     path("sort_by_followers/", sort_by_followers),
     path("send_connection_request/", send_connection_request),
     path("accept_connection_request/",accept_connection_request),

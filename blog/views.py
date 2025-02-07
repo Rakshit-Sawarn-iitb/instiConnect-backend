@@ -1,17 +1,21 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .models import *
 from .serializers import *
-
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth import authenticate
+from rest_framework.permissions import IsAuthenticated
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_many_blog(request):
     blog_objs = Blog.objects.all()
     serializer = blogSerializer(blog_objs , many = True)
     return Response({ 'user_no' : 200 , 'content' : serializer.data})
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_one_blog(request , id):
     try:
 
@@ -25,6 +29,7 @@ def get_one_blog(request , id):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def post_blog(request):
     data = request.data
     print(data)
@@ -36,6 +41,7 @@ def post_blog(request):
     return Response({ 'user_no' : 200 , 'content' : data})
 
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def delete_blog(request , id):
     try:
 
@@ -48,6 +54,7 @@ def delete_blog(request , id):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def like_blog(request, id):
     try:
 
@@ -79,6 +86,7 @@ def like_blog(request, id):
 
 
 @api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
 def edit_blog(request , id):
     try:
 
@@ -96,6 +104,7 @@ def edit_blog(request , id):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def sort_by_like(request):
     sort_by = request.query_params.get('sort_by', 'likes')
 
@@ -107,6 +116,7 @@ def sort_by_like(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def sort_by_date(request):
     sort_by = request.query_params.get('sort_by', 'likes')
 
