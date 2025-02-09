@@ -32,13 +32,14 @@ def get_one_blog(request , id):
 @permission_classes([IsAuthenticated])
 def post_blog(request):
     data = request.data
-    print(data)
-    serializer = blogSerializer(data = request.data)
+    data['username'] = request.user.id  # Attach the authenticated user
+
+    serializer = blogSerializer(data=data)
     if not serializer.is_valid():
-        print(serializer.errors)
-        return Response({ 'user_no' : 200 ,'errors' : serializer.errors , 'content' : 'something went wrong'})
+        return Response({'status': 400, 'errors': serializer.errors, 'message': 'Something went wrong'})
+
     serializer.save()
-    return Response({ 'user_no' : 200 , 'content' : data})
+    return Response({'status': 200, 'message': 'Blog posted successfully'})
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
